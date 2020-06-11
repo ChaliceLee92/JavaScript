@@ -1,0 +1,37 @@
+#snake-layer {
+	margin: 40px auto;
+	position: relative;
+	border: 1px solid #ccc;
+}
+
+.snakeHead {
+	background: #fc0 !important;
+}
+
+.line {
+	position: absolute;
+}
+
+.lineH {
+	border-bottom: 1px solid #ccc;
+	width: 100%;
+}
+
+.lineS {
+	border-right: 1px solid #ccc;
+	height: 100%;
+}
+
+.noborder .line {
+	border: 0;
+}
+
+.danger {
+	color: #fff;
+	background-color: #cb4042;
+}
+
+.snake-body {
+	color: #fff;
+	background-color: #25ae88;
+}

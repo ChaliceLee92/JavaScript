@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+        div {
+            width: 300px;
+            height: 300px;
+            font-size: 50px;
+            text-align: center;
+            position: absolute;
+            transition: 1s;
+            background-color: brown;
+        }
+    </style>
+</head>
+
+<body>
+
+</body>
+<script type="text/javascript">
+    let arr = [];//存放DIV
+    let arrH = [];//记录每一列的高度
+    craeteDiv(20);//执行创建div
+    //创建DIV函数
+    function craeteDiv(n) {
+        for (let i = 0; i < n; i++) {
+            let div = document.createElement("div");
+            let h = (Math.random() * 30) * 10 + 200;
+            div.style.height = h + "px";
+            div.innerText = i + 1;
+            arr.push(div);//把div放到数组里面
+            document.body.appendChild(div);
+        }
+    }
+    change();
+    //改变div的位置
+    function change() {
+        let winW = window.innerWidth;//获取屏幕宽度
+        let num = parseInt(winW / 310);//计算一行多少列
+        arrH = [];
+        let center = (winW - num * 310 - 10) / 2;
+        // let winW=document.body.clirmtWidth;
+        // let winW=document.documentElement.clienWidth;
+        for (let i = 0; i < arr.length; i++) {
+            if (i < num) {
+                arr[i].style.left = center + i * 310 + "px";
+                arr[i].style.top = "0px";
+                arrH[i] = arr[i].offsetHeight + 10;
+            } else {
+                let min = finMin(arrH);
+                arr[i].style.left = center + min * 310 + "px";
+                arr[i].style.top = arrH[min] + "px";
+                arrH[min] += arr[i].offsetHeight + 10;
+            }
+        }
+        console.log(arrH);
+    }
+    //窗口改变大小时执行
+    window.onresize = function () {
+        change();
+    }
+    //
+    window.onscroll = function () {
+        let sTop = document.body.scrollTop || document.documentElement.scrollTop;
+        let winH = window.innerHeight;
+        let minH = arrH[finMin(arrH)]
+        if (sTop + winH > minH) {//判断到了低
+            craeteDiv(10);
+        }
+        change();//排列div
+    }
+
+    //找数组最小值下标
+    function finMin(arr) {
+        let min = 0;
+        for (let i = 0; i < arr.length; i++) {
+            min = arr[min] > arr[i] ? i : min;
+        }
+        return min;
+    }
+</script>
+
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+
+
+    .all {
+        width: 200px;
+        height: 200px;
+        border: 1px solid #ccc;
+        margin: 100px auto;
+        position: relative;
+        padding: 8px;
+    }
+
+    .screen {
+        width: 200px;
+        height: 200px;
+        position: relative;
+        /* overflow: hidden; */
+    }
+
+    .screen ul {
+        position: absolute;
+        width: 3000px;
+        top: 0;
+        left: 0;
+    }
+
+
+    .screen li {
+        width: 200px;
+        height: 200px;
+        overflow: hidden;
+        float: left;
+    }
+
+    .all ol {
+        position: absolute;
+        right: 22px;
+        bottom: 10px;
+        line-height: 20px;
+        text-align: center;
+    }
+
+    .all ol li {
+        float: left;
+        width: 20px;
+        height: 20px;
+        background: #fff;
+        border: 1px solid #fff;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .all ol li.current {
+        background: yellow;
+    }
+
+    .left , .right{
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        left: 5px;
+        top: 50%;
+        margin-top: -20px;
+        background-color: #000;
+        cursor: pointer;
+        line-height: 40px;
+        font-size: 20px;
+        color: #fff;
+        text-align: center;
+        opacity: 0.3;
+    }
+
+    .right{
+        right: 5px !important;
+        left: auto;
+    }
+</style>
+
+<body>
+    <div class="all" id="box">
+        <div class="screen">
+            <ul>
+                <!-- <li><a href="javascript:;"><img src="images/1.jpg"></a></li>
+                <li><a href="javascript:;"><img src="images/2.jpg"></a></li>
+                <li><a href="javascript:;"><img src="images/3.jpg"></a></li>
+                <li><a href="javascript:;"><img src="images/4.jpg"></a></li>
+                <li><a href="javascript:;"><img src="images/5.jpg"></a></li> -->
+            </ul>
+            <ol>
+
+            </ol>
+        </div>
+        <div id="arr"><span class="left">&lt;</span><span class="right">&gt;</span></div>
+    </div>
+</body>
+
+</html>
+<script>
+    let ImgList = [
+        {
+            id: 0,
+            img: 'images/1.jpg',
+            url: ''
+        },
+        {
+            id: 1,
+            img: 'images/2.jpg',
+            url: ''
+        },
+        {
+            id: 2,
+            img: 'images/3.jpg',
+            url: ''
+        },
+        {
+            id: 3,
+            img: 'images/4.jpg',
+            url: ''
+        },
+        {
+            id: 4,
+            img: 'images/5.jpg',
+            url: ''
+        }
+    ]
+
+
+    //动画函数
+    function animate(el, target) {
+        if (el.timer) {
+            clearInterval(el.timer);
+        }
+        el.timer = setInterval(function () {
+            let leader = el.offsetLeft;  // ul 的 当前位置
+            
+            
+            let step = 30;  // 每次前进 多少 距离
+            if (target < leader) {
+                step = -step;
+            }
+            //如果到达终点的距离已经小于一步了，就直接跨到终点。
+            if (Math.abs(target - leader) >= Math.abs(step)) {
+                leader = leader + step;
+                el.style.left = leader + "px";
+            } else {
+                clearInterval(el.timer);
+                el.style.left = target + "px";
+            }
+        }, 15);
+    }
+    //1. 找对象
+    let box = document.querySelector(".all");
+    let screen = document.querySelector(".screen");
+    let ul = screen.children[0];
+    let ol = screen.children[1];
+    let arr = document.querySelector("#arr");
+    let leftArr = arr.querySelector(".left");
+    let rightArr = arr.querySelector(".right");
+    let imgwidth = screen.offsetWidth;
+
+    let pic = fk = 0;
+    let timer;
+    //2. 动态创建结构
+    //2.1 创建小方块,ulLis
+    //根据ul中li的个数创建小方块
+
+    let liArr = []
+
+    for (let i = 0; i < ImgList.length; i++) {
+        let li = document.createElement("li");
+        let str = `<li><a href="javascript:;"><img src="${ImgList[i].img}"></a></li>`
+        liArr.push(str)
+        ol.appendChild(li);
+        li.innerHTML = i + 1;
+    }
+    let res = liArr.join('')
+    ul.innerHTML = res
+
+    let ollis = ol.children;
+    ollis[0].className = "current";
+
+    //2.2 创建假图片
+    //2.2.1 克隆ul下的第一个li
+    let ullis = ul.children;
+
+    let cloneli = ullis[0].cloneNode(true);
+
+    ul.appendChild(cloneli);
+    //3. 简单轮播功能
+    //3.1 给小方块注册点击事件
+    for (let i = 0; i < ollis.length; i++) {
+        ollis[i].index = i;//存索引
+        ollis[i].addEventListener("click", function () {
+            //3.2 小方块高亮排他
+            for (let i = 0; i < ollis.length; i++) {
+                ollis[i].className = "";
+            }
+            this.className = "current";
+            //3.3. 移动ul
+            let target = -this.index * imgwidth;
+            
+            animate(ul, target);
+
+            pic = fk = this.index;
+        })
+    }
+
+    //4. 左右焦点功能（无缝）
+    //4.1 鼠标经过盒子，显示箭头
+    box.onmouseover = function () {
+        arr.style.display = "block";
+        //清除定时器
+        clearInterval(timer);
+    }
+    //4.2 鼠标离开盒子，隐藏箭头
+    box.onmouseleave = function () {
+        arr.style.display = "none";
+        timer = setInterval(function () {
+            rightArr.onclick();
+        }, 1000)
+    }
+    //4.3 点击右箭头
+    rightArr.onclick = function () {
+        //如果已经到了最后一张假图片，让ul瞬移到第一张真图片
+        if (pic === ollis.length) {
+            ul.style.left = 0;
+            pic = 0;
+        }
+        pic++;//记录出去的图片张数
+
+        fk++;
+        if (fk === ollis.length) {
+            fk = 0;
+        }
+        for (let i = 0; i < ollis.length; i++) {
+            ollis[i].className = "";
+        }
+        ollis[fk].className = "current";
+        let target = -pic * imgwidth;
+        animate(ul, target);
+    }
+    //4.4 点击左箭头
+    leftArr.onclick = function () {
+        if (pic === 0) {
+            ul.style.left = -(ullis.length - 1) * imgwidth + "px";
+            pic = ullis.length - 1;
+        }
+        pic--;
+
+        //同步小方块
+        fk--;
+        if (fk === -1) {
+            fk = ollis.length - 1;
+        }
+        for (let i = 0; i < ollis.length; i++) {
+            ollis[i].className = "";
+        }
+        ollis[fk].className = "current";
+        let target = -pic * imgwidth;
+        animate(ul, target);
+    }
+    //5. 自动播放的功能
+    timer = setInterval(function () {
+        rightArr.onclick();
+    }, 1000)
+    //6. 同步问题
+    //6.1 点击右箭头,同步
+    //6.2 点击左箭头，同步
+    //6.3 点击小方块，同步
+
+</script>

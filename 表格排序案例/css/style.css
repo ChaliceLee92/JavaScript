@@ -1,0 +1,30 @@
+/* 初始化页面 */
+* {
+	padding: 0;
+	margin: 0;
+}
+
+.table_box{
+	width: 600px;
+	margin: 400px auto;
+}
+
+/* 表格 */
+table {
+	width: 800px;
+}
+/* 表头 */
+th {
+	height: 50px;
+	cursor: pointer;
+}
+/* 表格 */
+td {
+	text-align: center;
+	padding: 20px;
+}
+
+.img{
+	width: 80px;
+	height: 80px;
+}
