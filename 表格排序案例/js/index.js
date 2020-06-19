@@ -58,14 +58,19 @@ Table.prototype.init = function (dataList) {
 
 Table.prototype.initThead = function () {
 	let thead = document.createElement('thead');
+	let arr = ['影片', '主演', '导演', '类别', '上映时间'];
+	let tps = ['img', 'star', 'direct', 'type', 'time'];
+	let tr = ['<tr>'];
 
-	thead.innerHTML = `<tr>
-                            <th falg="img">影片</th>
-                            <th falg="star">主演</th>
-                            <th falg="direct">导演</th>
-                            <th falg="type">类别</th>
-                            <th falg="time">上映时间</th>
-                        </tr>`;
+	for (let i = 0; i < arr.length; i++) {
+		const element = arr[i];
+		let str = `<th falg="${tps[i]}">${element}</th>`;
+		tr.push(str);
+	}
+	
+	tr.push('</tr>');
+
+	thead.innerHTML = tr.join('');
 
 	this.table.appendChild(thead);
 };
@@ -119,23 +124,23 @@ Table.prototype.TableSort = function (dataList, attr) {
 };
 
 Table.prototype.initSort = function (dataList) {
-    let ths = document.querySelectorAll('th');
-    
-    let self = this
+	let ths = document.querySelectorAll('th');
 
-    // 点击表头排序
+	let self = this;
+
+	// 点击表头排序
 	ths.forEach(item => {
-        item.onclick = function () {
-            let falg = this.getAttribute('falg');
-            
-            self.TableSort(dataList, falg);
-            
+		item.onclick = function () {
+			let falg = this.getAttribute('falg');
+
+			self.TableSort(dataList, falg);
+
 			self.initTbody(dataList);
 		};
 	});
 };
 
 // new实例对象
-let table = new Table("table");
+let table = new Table('table');
 // 调用实例的原型方法
 table.init(movieArray);

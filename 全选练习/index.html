@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>全选练习</title>
+</head>
+
+<body>
+    <div id="box">
+        <input type="checkbox" id="checkAll" /><label for="checkAll" id="checkAllLabel">全选</label>
+        <button style="margin-left: 20px;" id="checkReverse">反选</button>
+        <hr id="hr">
+        <div id="city"></div>
+    </div>
+</body>
+<script>
+    window.onload = function () {
+        let ocheckAll = document.getElementById('checkAll');
+        let oCity = document.getElementById('city');
+        let ocheckAllLabel = document.getElementById('checkAllLabel');
+        let oInput = oCity.getElementsByTagName('input');
+        let ocheckReverse = document.getElementById('checkReverse');
+        //初始化数据
+        let arr = ['北京', '上海', '广州', '深圳', '厦门'];
+        let tmp = []
+        for (let i = 0; i < arr.length; i++) {
+            // str += '<div><input type="checkbox"><label>'.concat(arr[i]).concat('</label></div>');
+            let str = `<div>
+                        <input type="checkbox">
+                        <label>
+                            ${arr[i]}
+                        </label>
+                    </div>`
+            tmp.push(str)
+        }
+        oCity.innerHTML = tmp.join('');
+        //全选、全不选
+        ocheckAll.addEventListener('click', function () {
+            for (let i = 0; i < oInput.length; i++) {
+                oInput[i].checked = this.checked;
+            }
+            isCheckAll();
+        });
+        //更新全选框状态
+        function isCheckAll() {
+            let n = 0
+            for (let i = 0; i < oInput.length; i++) {
+                if (oInput[i].checked) {
+                    n++
+                }
+            }
+
+            ocheckAll.checked = n === oInput.length;
+            ocheckAllLabel.innerText = ocheckAll.checked ? '全不选' : '全选';
+        }
+        //根据复选框个数跟新全选框的状态
+        oCity.addEventListener('click', function (ev) {
+            var ev = ev || window.event;
+            var target = ev.target || ev.srcElement;//为了兼容IE
+            if (target.nodeName.toLowerCase() === 'input') {
+                isCheckAll();
+            }
+        }, true);
+        //反选
+        ocheckReverse.addEventListener('click', function () {
+            for (let i = 0; i < oInput.length; i++) {
+                oInput[i].checked = !oInput[i].checked;
+            }
+            isCheckAll();
+        });
+    };
+</script>
+
+</html>

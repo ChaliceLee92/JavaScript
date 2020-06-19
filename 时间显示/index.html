@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间显示</title>
+</head>
+
+<body>
+    <div id="div1">
+    </div>
+    <script type="text/javascript">
+        function getD1() {
+            //获取时间
+            let date = new Date().toLocaleString();
+            //获取div
+            let div1 = document.getElementById("div1");
+            div1.innerHTML = date;
+        }
+        //使用定时器实现一秒写一次时间
+        setInterval("getD1()", 1000);
+    </script>
+</body>
+
+</html>

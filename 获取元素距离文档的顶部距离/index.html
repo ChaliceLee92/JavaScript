@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>获取元素距离文档顶部距离</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+<body>
+    <div style="height: 1900px;background-color: brown;"></div>
+    <div id="offset">距离顶部距离</div>
+</body>
+
+</html>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script>
+    // jq 实现
+    // let offset = $('#offset').offset()
+
+
+    // 递归实现方案 ， 我们通过遍历目标元素、目标元素的父节点、父节点的父节点......依次溯源，并累加这些遍历过的节点相对于其最近祖先节点（且 `position` 属性非`static`）的偏移量，向上直到 `document`，累加即可得到结果。其中，我们需要使用 JavaScript 的 `offsetTop` 来访问一个 DOM 节点上边框相对离其本身最近、且 `position` 值为非`static` 的祖先元素的垂直偏移量。具体实现为：
+    const offset = ele => {
+        let result = {
+            top: 0,
+            left: 0
+        }
+
+        const getOffset = (node, init) => {
+
+            // 检查节点是否 ELEMENT_NODE 
+            if (node.nodeType !== 1) {
+                return
+            }
+
+            // 获取 节点的 position
+            position = window.getComputedStyle(node)['position']
+
+            // 如果 该节点 是 static 则 递归 往下查找
+            if (typeof (init) === 'undefined' && position === 'static') {
+                // 往父元素继续查找
+                getOffset(node.parentNode)
+                return
+            }
+
+            // offsetTop 获取距离目标元素最近的position不为static的祖先元素，如果没有则指向body元素。
+            result.top = node.offsetTop + result.top - node.scrollTop
+            result.left = node.offsetLeft + result.left - node.scrollLeft
+
+            // 固定定位不计
+            if (position === 'fixed') {
+                return
+            }
+            // 往父元素继续查找
+            getOffset(node.parentNode)
+        }
+
+        // 当前 DOM 节点的 display === 'none' 时, 直接返回 {top: 0, left: 0}
+        if (window.getComputedStyle(ele)['display'] === 'none') {
+            return result
+        }
+
+        let position
+
+        getOffset(ele, true)
+
+        return result
+
+    }
+
+    let ele = document.getElementById('offset')
+    let result = offset(ele)
+
+
+    // getBoundingClientRect 方法 实现
+    const offset1 = ele => {
+        let result = {
+            top: 0,
+            left: 0
+        }
+        // 当前为 IE11 以下，直接返回 {top: 0, left: 0}
+        if (!ele.getClientRects().length) {
+            return result
+        }
+
+        // 当前 DOM 节点的 display === 'none' 时，直接返回 {top: 0, left: 0}
+        if (window.getComputedStyle(ele)['display'] === 'none') {
+            return result
+        }
+
+        result = ele.getBoundingClientRect()
+
+        // ownerDocument 返回当前节点的顶层的 `document` 对象。 `ownerDocument` 是文档，`documentElement` 是根节点。
+        var docElement = ele.ownerDocument.documentElement
+
+        return {
+            top: result.top + window.pageYOffset - docElement.clientTop,
+            left: result.left + window.pageXOffset - docElement.clientLeft
+        }
+    }
+
+
+</script>
